@@ -23,6 +23,12 @@ Admin password: globaladmin</p>
 
 ---
 
+<h2 style="text-decoration: underline">Sequence Diagram:</h2>
+<p>A sequence diagram of the project:</p>
+<img src="images/sequence_diagram.png">
+
+---
+
 
 
 <h2 style="text-decoration: underline">Test Plan:</h2><br>
