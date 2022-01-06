@@ -13,7 +13,7 @@ Admin password: globaladmin</p>
 
 <h2 style="text-decoration: underline">Use Case Diagram:</h2>
 <p>A simple use case diagram showing the different actions users can take while using the application:</p>
-<img src="documentation-images/usecase-diagram.png">
+<img src="documentation-images/usecase.PNG">
 
 ---
 
