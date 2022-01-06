@@ -17,7 +17,7 @@ public class transactionLogger {
     public static void Logger(String message){
         try{
             String timestamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
-            FileWriter fw = new FileWriter("../logs/Transaction Logger.txt", true);
+            FileWriter fw = new FileWriter("../logs/Shop Transactions Logger.txt", true);
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(timestamp + " " + message);
             bw.newLine();

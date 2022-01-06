@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.solent.com504.oodd.cart.dao.impl.InvoiceRepository;
+import org.solent.com504.oodd.cart.model.dto.Invoice;
 import org.solent.com504.oodd.cart.web.transactionLog.transactionLogger;
 
 @Controller
@@ -172,6 +174,12 @@ public class MVCController {
         String cardtoexpdate = propertiesDaoFile.getProperty("org.solent.com504.oodd.web.cardtoexpdate");
         String cardtocvv = propertiesDaoFile.getProperty("org.solent.com504.oodd.web.cardtocvv");
         String url = propertiesDaoFile.getProperty("org.solent.com504.oodd.web.url");
+
+        List<ShoppingItem> availableItems = shoppingService.getAvailableItems();
+
+        List<ShoppingItem> shoppingCartItems = shoppingCart.getShoppingCartItems();
+
+        Double shoppingcartTotal = shoppingCart.getTotal();
         // note that the shopping cart is is stored in the sessionUser's session
         // so there is one cart per sessionUser
 //        ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
@@ -202,20 +210,17 @@ public class MVCController {
                 toCard.setCvv(cardtocvv);
 
                 TransactionReplyMessage query = rester.transferMoney(fromCard, toCard, totalAmount);
-                String transactionMessage = "";
-                TransactionReplyMessage transactionReplyMessage = new TransactionReplyMessage();
-                transactionMessage = transactionReplyMessage.toString();
 
                 String errormessage = "";
                 errormessage = query.getMessage();
-                if (errormessage == null) {
-                    String logmsg = "Transaction complete with card" + " " + cardno + " " + "for the amount of" + " " + totalAmount + "." + "Full report: " + query;
+                if (errormessage == null && totalAmount > 0) {
+                    String logmsg = "Transaction was completed with card" + " " + cardno + " " + "for the items" + " " + shoppingCartItems + "for the total amount of" + " " + totalAmount + "." + "Full report: " + query;
                     transactionLogger.Logger(logmsg);
-                    transMessage = "transaction sent successfully";
+                    transMessage = "order has been placed successfully";
                 } else {
                     String logmsg = "Transaction was unsuccessful with card" + " " + cardno + " " + "for the amount of" + " " + totalAmount + "." + "Full report: " + query;
                     transactionLogger.Logger(logmsg);
-                    transMessage = "transaction failed, please check your card details or contact admin";
+                    transMessage = "order failed, please check your card details, shopping cart or contact admin";
                 }
             }
         } catch (Exception e) {
@@ -227,12 +232,6 @@ public class MVCController {
         } else {
             message = "unknown action=" + action;
         }
-
-        List<ShoppingItem> availableItems = shoppingService.getAvailableItems();
-
-        List<ShoppingItem> shoppingCartItems = shoppingCart.getShoppingCartItems();
-
-        Double shoppingcartTotal = shoppingCart.getTotal();
 
         // populate model with values
         model.addAttribute("availableItems", availableItems);
@@ -258,6 +257,7 @@ public class MVCController {
 
         // used to set tab selected
         model.addAttribute("selectedPage", "userOrders");
+        
 
         List<ShoppingItem> availableItems = shoppingService.getAvailableItems();
 
@@ -370,6 +370,10 @@ public class MVCController {
         // get the action
         String action = (String) request.getParameter("action");
         if ("submitadmindetails".equals(action)) {
+            cardto = (String) request.getParameter("cardto");
+            cardtoname = (String) request.getParameter("cardtoname");
+            cardtoexpdate = (String) request.getParameter("cardtoexpdate");
+            cardtocvv = (String) request.getParameter("cardtocvv");
 
             propertiesDaoFile.setProperty("org.solent.com504.oodd.web.cardto", cardto);
             propertiesDaoFile.setProperty("org.solent.com504.oodd.web.cardtoname", cardtoname);
@@ -380,6 +384,7 @@ public class MVCController {
             toCard.setName(cardtoname);
             toCard.setEndDate(cardtoexpdate);
             toCard.setCvv(cardtocvv);
+
             message = "bank details are set";
             // do the transfer
         }
