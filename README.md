@@ -29,6 +29,12 @@ Admin password: globaladmin</p>
 
 ---
 
+<h2 style="text-decoration: underline"> Javadoc:</h2>
+<p>Javadoc of the modules:</p>
+<img src="images/sequence_diagram.png">
+
+---
+
 
 
 <h2 style="text-decoration: underline">Test Plan:</h2><br>
