@@ -28,6 +28,7 @@
         <button type="submit" id="submit" >Submit</button>
         
         <p>${transMessage}</p>
+        <p>${ordermessage}</p>
         <p id="erroroutput"></p>
     </form>
 

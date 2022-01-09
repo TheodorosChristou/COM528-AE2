@@ -3,7 +3,10 @@ package org.solent.com504.oodd.cart.spring.web;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.solent.com504.oodd.cart.dao.impl.InvoiceRepository;
+import org.solent.com504.oodd.cart.dao.impl.ShoppingItemCatalogRepository;
+import org.solent.com504.oodd.cart.dao.impl.UserRepository;
 import org.solent.com504.oodd.cart.model.dto.Invoice;
 import org.solent.com504.oodd.cart.web.transactionLog.transactionLogger;
 
@@ -46,6 +51,12 @@ public class MVCController {
     // so the shopping cart is unique for each web session
     @Autowired
     ShoppingCart shoppingCart = null;
+
+    @Autowired
+    private ShoppingItemCatalogRepository shoppingItemCatalogRepository;
+
+    @Autowired
+    private InvoiceRepository invoiceRepository;
 
     private User getSessionUser(HttpSession session) {
         User sessionUser = (User) session.getAttribute("sessionUser");
@@ -95,12 +106,19 @@ public class MVCController {
         } else if ("addItemToCart".equals(action)) {
             ShoppingItem shoppingItem = shoppingService.getNewItemByName(itemName);
             if (shoppingItem == null) {
-                message = "cannot add unknown " + itemName + " to cart";
+                List<ShoppingItem> shoppingItemList = shoppingItemCatalogRepository.findByName(itemName);
+                ShoppingItem shoppingItem2 = shoppingItemList.get(0);
+                System.out.println(shoppingItemList);
+                shoppingCart.addItemToCart(shoppingItem2);
             } else {
                 message = "adding " + itemName + " to cart price= " + shoppingItem.getPrice();
                 shoppingCart.addItemToCart(shoppingItem);
             }
         } else if ("removeItemFromCart".equals(action)) {
+            ShoppingItem shoppingItem = shoppingService.getNewItemByName(itemName);
+            if (shoppingItem == null) {
+                shoppingCart.removeItemFromCart(itemUuid);
+            }
             message = "removed " + itemName + " from cart";
             shoppingCart.removeItemFromCart(itemUuid);
         } else {
@@ -111,12 +129,15 @@ public class MVCController {
 
         List<ShoppingItem> shoppingCartItems = shoppingCart.getShoppingCartItems();
 
+        List<ShoppingItem> newshoppingcatalogue = shoppingItemCatalogRepository.findAll();
+
         Double shoppingcartTotal = shoppingCart.getTotal();
 
         // populate model with values
         model.addAttribute("availableItems", availableItems);
         model.addAttribute("shoppingCartItems", shoppingCartItems);
         model.addAttribute("shoppingcartTotal", shoppingcartTotal);
+        model.addAttribute("newshoppingcatalogue", newshoppingcatalogue);
         model.addAttribute("message", message);
         model.addAttribute("errorMessage", errorMessage);
 
@@ -165,6 +186,7 @@ public class MVCController {
         // used to set tab selected
         model.addAttribute("selectedPage", "checkout");
 
+        String ordermessage = "";
         String message = "";
         String transMessage = "";
         String errorMessage = "";
@@ -178,7 +200,7 @@ public class MVCController {
         List<ShoppingItem> availableItems = shoppingService.getAvailableItems();
 
         List<ShoppingItem> shoppingCartItems = shoppingCart.getShoppingCartItems();
-
+        Date date = java.util.Calendar.getInstance().getTime();
         Double shoppingcartTotal = shoppingCart.getTotal();
         // note that the shopping cart is is stored in the sessionUser's session
         // so there is one cart per sessionUser
@@ -214,6 +236,23 @@ public class MVCController {
                 String errormessage = "";
                 errormessage = query.getMessage();
                 if (errormessage == null && totalAmount > 0) {
+                    if (UserRole.ANONYMOUS.equals(sessionUser.getUserRole())) {
+                        ordermessage = "Anonymous cant view orders, please log in for further purchases if you wish to see them";
+                    } else {
+                        UUID uuidrandom = UUID.randomUUID();
+                        String uuid = uuidrandom.toString();
+                        Invoice invoice = new Invoice();
+                        invoice.setAmountDue(totalAmount);
+                        invoice.setPurchaser(sessionUser);
+                        invoice.setDateOfPurchase(date);
+                        invoice.setInvoiceNumber(uuid);
+
+                        invoice.setPurchasedItems(shoppingCartItems);
+                        invoice = invoiceRepository.save(invoice);
+
+                        model.addAttribute("invoice", invoice);
+
+                    }
                     String logmsg = "Transaction was completed with card" + " " + cardno + " " + "for the items" + " " + shoppingCartItems + "for the total amount of" + " " + totalAmount + "." + "Full report: " + query;
                     transactionLogger.Logger(logmsg);
                     transMessage = "order has been placed successfully";
@@ -237,7 +276,7 @@ public class MVCController {
         model.addAttribute("availableItems", availableItems);
         model.addAttribute("shoppingCartItems", shoppingCartItems);
         model.addAttribute("shoppingcartTotal", shoppingcartTotal);
-        model.addAttribute("message", message);
+        model.addAttribute("ordermessage", ordermessage);
         model.addAttribute("transMessage", transMessage);
         model.addAttribute("errorMessage", errorMessage);
 
@@ -257,17 +296,19 @@ public class MVCController {
 
         // used to set tab selected
         model.addAttribute("selectedPage", "userOrders");
-        
 
         List<ShoppingItem> availableItems = shoppingService.getAvailableItems();
 
         List<ShoppingItem> shoppingCartItems = shoppingCart.getShoppingCartItems();
+
+        List<Invoice> userOrders = invoiceRepository.findAll();
 
         Double shoppingcartTotal = shoppingCart.getTotal();
 
         model.addAttribute("availableItems", availableItems);
         model.addAttribute("shoppingCartItems", shoppingCartItems);
         model.addAttribute("shoppingcartTotal", shoppingcartTotal);
+        model.addAttribute("userOrders", userOrders);
         return "userOrders";
     }
 
@@ -277,6 +318,7 @@ public class MVCController {
             @RequestParam(name = "itemUUID", required = false) String itemUuid,
             @RequestParam(name = "newitemname", required = false) String newitemname,
             @RequestParam(name = "newitemprice", required = false) Double newitemprice,
+            @RequestParam(name = "newitemuuuid", required = false) String newitemuuuid,
             Model model,
             HttpSession session,
             HttpServletRequest request) {
@@ -300,21 +342,26 @@ public class MVCController {
         if (action == null) {
             // do nothing but show page
         } else if ("addItemToList".equals(action)) {
-            ShoppingItem newshoppingitem = new ShoppingItem(newitemname, newitemprice);
-            ShoppingServiceImpl shoppingserviceimpl = new ShoppingServiceImpl();
-            System.out.println(availableItems);
-            System.out.println(newshoppingitem);
+            ShoppingItem newshoppingitem = new ShoppingItem();
+            newshoppingitem.setName(newitemname);
+            newshoppingitem.setPrice(newitemprice);
+            newshoppingitem.setUuid(newitemuuuid);
+            //List<ShoppingItem> newshoppingcatalogue = shoppingItemCatalogRepository.findAll();
+            newshoppingitem = shoppingItemCatalogRepository.save(newshoppingitem);
+            //System.out.println(availableItems);
+            //System.out.println(newshoppingitem);
+            //System.out.println(newshoppingcatalogue);
         } else if ("removeItemFromList".equals(action)) {
             message = "removed " + itemName + " from cart";
-            shoppingCart.removeItemFromCart(itemUuid);
         } else {
             message = "unknown action=" + action;
         }
-
+        List<ShoppingItem> newshoppingcatalogue = shoppingItemCatalogRepository.findAll();
         // populate model with values
         model.addAttribute("availableItems", availableItems);
         model.addAttribute("shoppingCartItems", shoppingCartItems);
         model.addAttribute("shoppingcartTotal", shoppingcartTotal);
+        model.addAttribute("newshoppingcatalogue", newshoppingcatalogue);
         model.addAttribute("message", message);
         model.addAttribute("errorMessage", errorMessage);
 

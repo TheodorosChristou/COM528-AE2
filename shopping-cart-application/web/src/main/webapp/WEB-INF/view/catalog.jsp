@@ -18,6 +18,7 @@
     <div style="color:green;">${message}</div>
 
     <form action="./catalog" method="post" id="addtocatalogform"">
+        Item Uuuid: <input type="text" id="newitemuuuid" name="newitemuuuid"/> <br>
         Item Name: <input type="text" id="newitemname" name="newitemname"/> <br>
         Item Stock: <input type="text" id="newitemstock" name="newitemstock"/> <br>
         Item Price: <input type="text" id="newitemprice" name="newitemprice"/> <br>
@@ -40,6 +41,24 @@
         </tr>
 
         <c:forEach var="item" items="${availableItems}">
+
+            <tr>
+                <td>${item.name}</td>
+                <td>${item.price}</td>
+                <td></td>
+                <td>
+                    <!-- post avoids url encoded parameters -->
+                    <form action="./catalog" method="get">
+                        <input type="hidden" name="itemName" value="${item.name}">
+                        <input type="hidden" name="action" value="removeItemFromList">
+                        <button type="submit" >Delete Item</button>
+                    </form> 
+                </td>
+            </tr>
+
+        </c:forEach>
+            
+                    <c:forEach var="item" items="${newshoppingcatalogue}">
 
             <tr>
                 <td>${item.name}</td>

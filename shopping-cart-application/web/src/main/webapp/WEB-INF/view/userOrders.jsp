@@ -17,28 +17,26 @@
     <div style="color:red;">${errorMessage}</div>
 
     <table class="table">
-
         <tr>
-            <th>Item Name</th>
-            <th>Price</th>
-            <th>Quantity</th>
+            <th scope="col">Time/Date of Purchase</th>
+            <th scope="col">Buyer</th>
+            <th scope="col">Order Number</th>
+            <th scope="col">Purchase information</th>
+
+            <th></th>
         </tr>
 
-        <c:forEach var="item" items="${shoppingCartItems}">
-
+        <c:forEach var="invoice" items="${userOrders}">
             <tr>
-                <td>${item.name}</td>
-                <td>${item.price}</td>
-                <td>${item.quantity}</td>
-                
+                <td>${invoice.dateOfPurchase}</td>
+                <td>${invoice.purchaser.username}</td>
+                <td>${invoice.invoiceNumber}</td>
+                <td>${invoice.purchasedItems}</td>
+
+
+
             </tr>
         </c:forEach>
-        <tr>
-            <td>TOTAL</td>
-            <td>${shoppingcartTotal}</td>
-        </tr>
-    </table>
-
 
 
 </main>

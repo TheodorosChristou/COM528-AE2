@@ -43,6 +43,23 @@
             </tr>
 
         </c:forEach>
+                <c:forEach var="item" items="${newshoppingcatalogue}">
+
+            <tr>
+                <td>${item.name}</td>
+                <td>${item.price}</td>
+                <td></td>
+                <td>
+                    <!-- post avoids url encoded parameters -->
+                    <form action="./home" method="get">
+                        <input type="hidden" name="itemName" value="${item.name}">
+                        <input type="hidden" name="action" value="addItemToCart">
+                        <button type="submit" >Add Item</button>
+                    </form> 
+                </td>
+            </tr>
+
+        </c:forEach>
     </table>
 
     <H1>Shopping cart</H1>
@@ -53,6 +70,7 @@
             <th>Price</th>
             <th>Quantity</th>
         </tr>
+
 
         <c:forEach var="item" items="${shoppingCartItems}">
 
