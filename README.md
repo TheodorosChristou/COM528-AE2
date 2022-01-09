@@ -45,7 +45,7 @@ User password: user1234</p>
 
 <h2 style="text-decoration: underline">Model Diagram:</h2>
 <p> A model diagram is a graphical visualization of the object orientation that goes thought out the system. It highlights the structure of a system by showing the various classes, attributes, methods and different relationships inside the software for a better understanding of the implementation and function.</p>
-<img src="documentation-images/model-1.PNG">
+<img src="documentation-images/model-2.PNG">
 
 ---
 
