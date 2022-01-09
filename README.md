@@ -4,6 +4,8 @@
 <h2 style="text-decoration: underline">Important Information:</h2>
 <p>Admin username: globaladmin<br>
 Admin password: globaladmin</p>
+<p>User username: user1234<br>
+User password: user1234</p>
 
 ---
 
