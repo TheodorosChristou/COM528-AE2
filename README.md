@@ -4,40 +4,62 @@
 <h2 style="text-decoration: underline">Important Information:</h2>
 <p>Admin username: globaladmin<br>
 Admin password: globaladmin</p>
+<p>User username: user1234<br>
+User password: user1234</p>
 
 ---
 
 <h2 style="text-decoration: underline">Introduction:</h2>
 <p>This is the documentation that I have done for my software. It highlights the different interactions many actions and actors have in the system while they navigate and work their way through the app. </p>
 
+---
+
+<h2 style="text-decoration: underline">How to run:</h2>
+<p>To run the software simply locate the project file inside NetBeans after you have unzipped the file, open the project, right click on the web module and select the Run option to start the server, if asked for details enter your tomcat server details or the default. Should there be an error, clean and build each module and try again. </p>
+
+---
 
 <h2 style="text-decoration: underline">Use Case Diagram:</h2>
-<p>A simple use case diagram showing the different actions users can take while using the application:</p>
-<img src="documentation-images/usecase.PNG">
+<p>Use case diagrams illustrate the main requirements of a system and shows key interactions between the actors and the system by describing what its supposed to do. They are primarily made before starting a project to highlight the important functions so that all the participants involved understand what its supposed to happen in an ideal scenario with a customer interacting with the system. Below there is a use case for both the user and admin, showing what they should be able to do within the application and how that connects together with the bank for a transaction, which is the main feature of the software:</p>
+<img src="documentation-images/usecase-diagram-final.PNG">
 
 ---
 
 <h2 style="text-decoration: underline">Robust Diagram:</h2>
-<p>A robust diagram of the project:</p>
-<img src="images/robust_diagram.png">
+<p>Robustness diagrams illustrate how the user interacts with different objects within the system in an internal level, how data interacts with interface and controllers to make the application work the way its supposed to. Below is a robustness diagram for the user doing a transaction and a robustness diagram for the admin viewing and adding details from the server:</p>
+<p> User </p>
+<img src="documentation-images/Robustness-diagram-user.PNG">
+<p> Admin </p>
+<img src="documentation-images/Robustness-diagram-admin.PNG">
 
 ---
 
 <h2 style="text-decoration: underline">Sequence Diagram:</h2>
-<p>A sequence diagram of the project:</p>
-<img src="images/sequence_diagram.png">
+<p>Sequence diagrams show how objects in a system or classes within code interact one another, more importantly it shows the order the actions taking place, showing the sequence of events for a better understanding of how every information flows from one bit of code to the next to complete tasks and requirements within the system. In the first sequence diagram the user enters the page, wants to log in, add items, and make a transaction. In the second diagram, an admin wants to log in, add a new item to the database, check the orders, and set the shop details. Below is a sequence diagram for a user doing a transaction and a sequence diagram for the admin showing and adding details:</p>
+<p> User </p>
+<img src="documentation-images/sequence-diagram-user.PNG">
+<p> Admin </p>
+<img src="documentation-images/sequence-diagram-admin.PNG">
+
+---
+
+<h2 style="text-decoration: underline">Model Diagram:</h2>
+<p> A model diagram is a graphical visualization of the object orientation that goes thought out the system. It highlights the structure of a system by showing the various classes, attributes, methods and different relationships inside the software for a better understanding of the implementation and function.</p>
+<img src="documentation-images/model.PNG">
 
 ---
 
 <h2 style="text-decoration: underline"> Javadoc:</h2>
-<p>Javadoc of the modules:</p>
-<img src="images/sequence_diagram.png">
+<p>Javadoc is a documentation generator for Java, allowing users to generate API documentation in HTML format from Java source code to describe classes, methods, functions and many more. To generate, right click on a module and select generate Javadoc, some images of the results are provided below:</p>
+<img src="documentation-images/javadoc-model.PNG">
+<img src="documentation-images/javadoc-model2.PNG">
 
 ---
 
 
 
 <h2 style="text-decoration: underline">Test Plan:</h2><br>
+<p>A Test Plan is a document that describes the test strategy, objective, estimate and result required to perform successful testing for a software. Its important because it helps determine the effort needed to quickly test the quality of the application and what its able to do. Below are the test plans I have covered during the making of the software:</p>
 
 <h2>Test 1:</h2>
 
@@ -83,7 +105,7 @@ Admin password: globaladmin</p>
 
 |    Test     |                                       Expected Result                                       |                      Actual Result                      |          Success or Failure           | Action needed |
 | :---------: | :-----------------------------------------------------------------------------------------: | :-----------------------------------------------------: | :---------------------------------: | :-----------: |
-| User orders | Logged in users should be able to view their orders | X | X |    X      |
+| User orders | Logged in users should be able to view their orders | Logged in users can view all orders like the admin | Failed |    Figure out a way to make it so users can view only their orders      |
 
 <br>
 
@@ -99,7 +121,7 @@ Admin password: globaladmin</p>
 
 |  Test   |                                 Expected Result                                 |                           Actual Result                            |         Success or Failure           | Action needed |
 | :-----: | :-----------------------------------------------------------------------------: | :----------------------------------------------------------------: | :---------------------------------: | :-----------: |
-| Admin catalog | Admin should be able to add and remove items from the list of available items | X | X |    X      |
+| Admin catalog | Admin should be able to add and remove items from the list of available items | Admin can add items but cant remove | Failed |    Figure out a way to remove item from the repo      |
 
 <br>
 
@@ -115,7 +137,7 @@ Admin password: globaladmin</p>
 
 |  Test   |                                 Expected Result                                 |                           Actual Result                            |         Success or Failure           | Action needed |
 | :-----: | :-----------------------------------------------------------------------------: | :----------------------------------------------------------------: | :---------------------------------: | :-----------: |
-| Admin viewing orders | Admin should be able to view all the orders made from all users | X | X |    X      |
+| Admin viewing orders | Admin should be able to view all the orders made from all users | Admin can view all orders | Success |    None      |
 
 <br>
 
